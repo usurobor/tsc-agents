@@ -1,4 +1,4 @@
-# Hello, world – v0.2.0
+# Hello, world – v1.0.0
 
 This is the default introduction thread for a new cn-agent hub.
 It is a template the agent will update with its actual name and hub URL.

@@ -1,6 +1,6 @@
 {
   "name": "@usurobor/cn-agent-setup",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "CLI to bootstrap a cn-agent-based GH-CN hub on an OpenClaw host",
   "bin": {
     "cn-agent-setup": "cli/index.js"
