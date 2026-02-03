@@ -9,7 +9,7 @@
 // This script:
 //   1. Ensures /root/.openclaw/workspace exists.
 //   2. Clones or updates https://github.com/usurobor/cn-agent into /root/.openclaw/workspace/cn-agent.
-//   3. Runs setup_0.1.2.sh from that clone (interactive gh-based flow).
+//   3. Runs the cn-agent v1.0.0 self-cohere flow directly (no legacy setup.sh scripts).
 
 const { spawn } = require('child_process');
 const path = require('path');
@@ -18,7 +18,6 @@ const fs = require('fs');
 const WORKSPACE_ROOT = '/root/.openclaw/workspace';
 const CN_AGENT_REPO = 'https://github.com/usurobor/cn-agent.git';
 const CN_AGENT_DIR = path.join(WORKSPACE_ROOT, 'cn-agent');
-const SETUP_SCRIPT = 'setup_0.1.2.sh';
 
 function run(cmd, args, options = {}) {
   return new Promise((resolve, reject) => {
@@ -51,17 +50,11 @@ function run(cmd, args, options = {}) {
       await run('git', ['pull', '--ff-only'], { cwd: CN_AGENT_DIR });
     }
 
-    // 3. Ensure setup script exists and is executable
-    const setupPath = path.join(CN_AGENT_DIR, SETUP_SCRIPT);
-    if (!fs.existsSync(setupPath)) {
-      console.error(`Error: expected ${SETUP_SCRIPT} in ${CN_AGENT_DIR} but it was not found.`);
-      console.error('Make sure cn-agent repo is up to date and contains the versioned setup script.');
-      process.exit(1);
-    }
-    fs.chmodSync(setupPath, 0o755);
-
-    console.log(`Running ${SETUP_SCRIPT} ...`);
-    await run(setupPath, [], { cwd: CN_AGENT_DIR });
+    // 3. Hand off to the cn-agent self-cohere flow
+    console.log('cn-agent-setup: cloned/updated cn-agent. The next step is defined in skills/self-cohere/SKILL.md.');
+    console.log('Tell your agent:');
+    console.log('  Cohere as https://github.com/usurobor/cn-agent');
+    console.log('Then let the agent follow the self-cohere skill using this clone at ' + CN_AGENT_DIR);
 
   } catch (err) {
     console.error('cn-agent-setup failed:', err.message || err);
