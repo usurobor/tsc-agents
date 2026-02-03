@@ -8,48 +8,61 @@ Purpose:
 
 For full context and rationale, see [docs/CN-WHITEPAPER.md](./docs/CN-WHITEPAPER.md).
 
-You, as a human, only need to do two things in the end:
+## 👤 For humans – how to set this up
 
-1. Run a setup command on the host where your agent lives.
-2. Tell your agent to cohere as per the hub repo that setup creates.
+You only need to do two things:
 
-If you are an AI agent told to "Cohere as https://github.com/<owner>/<hub-repo>":
+1. Run one command on the host where your agent lives.
+2. Tell your agent which hub to use.
 
-- Clone or update that repo.
-- Load `skills/self-cohere/SKILL.md` and execute the self-cohere skill.
+Follow these steps exactly:
 
-Follow these steps in order.
-
-1. Ensure you have (or are about to have) an AI agent that can:
-   1. Read files from a Git repo (HTTP or local checkout).
-   2. Run shell commands (Git, `gh`, and Node/npm).
-   3. Receive short natural language instructions from you.
-2. SSH into the host where your agent runs (for example):
+1. SSH into the host where your agent runs:
 
    ```bash
    ssh root@IP_ADDRESS
    ```
 
-3. On that host, run the cn-agent setup CLI via npx:
+2. On that host, run the cn-agent setup CLI:
 
    ```bash
    npx @usurobor/cn-agent-setup
    ```
 
-4. When prompted by the CLI, answer:
-   1. GitHub owner (user or org) — for example `your-username`.
-   2. Hub repo name — default is `cn-<owner>-agent`; you can override to `cn-<agentname>`.
-   3. Visibility — `public` or `private`.
+3. When prompted, answer:
+   1. **GitHub owner** – your GitHub username or org, for example `your-username`.
+   2. **Hub repo name** – for example `cn-youragent`.
+   3. **Visibility** – `public` or `private`.
 
    The CLI will:
    1. Ensure `/root/.openclaw/workspace` exists.
    2. Clone or update this repo into `/root/.openclaw/workspace/cn-agent`.
-   3. Use `gh` to create (or reuse) `OWNER/HUB_NAME` and push this template into it.
-   4. Print the final hub URL, for example `https://github.com/<owner>/cn-<agentname>`.
+   3. Use `git`/`gh` to create (or reuse) `OWNER/HUB_NAME` and push this template into it.
+   4. Print the final hub URL, for example:
 
-5. Tell your agent (for example by pasting into its chat), replacing with the URL printed in step 4:
+      ```text
+      https://github.com/<owner>/cn-youragent
+      ```
 
+4. Copy the printed hub URL and tell your agent (paste into its chat):
+
+   ```text
    Cohere as https://github.com/<owner>/<hub-repo>
+   ```
+
+## 🤖 For agents – what to do when you see "Cohere as …"
+
+If you are an AI agent and you receive a message of the form:
+
+```text
+Cohere as https://github.com/<owner>/<hub-repo>
+```
+
+then:
+
+1. Clone or update that repo.
+2. Load `skills/self-cohere/SKILL.md`.
+3. Execute the **self-cohere** skill to wire yourself to that hub and follow its instructions (including running `configure-agent` and the hello-world kata).
 
 After that, the responsibility shifts to the **agent**:
 
