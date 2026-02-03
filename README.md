@@ -21,7 +21,9 @@ For full context and rationale, see the [whitepaper](./docs/CN-WHITEPAPER.md).
 
 You don't have an AI agent yet but want one that uses git-CN.
 
-Do this (about 20–30 minutes total):
+Expected time: **20–30 minutes** (including server + OpenClaw setup).
+
+Do this:
 
 1. **Create a small server on DigitalOcean** (recommended; keep your agent off your personal laptop):
    1. Go to [DigitalOcean](https://cloud.digitalocean.com/registrations/new) and create an account.
@@ -53,6 +55,8 @@ Do this (about 20–30 minutes total):
 ## 🧑‍💻 Connect your agent
 
 You already have an OpenClaw agent and want to give it a git-CN hub.
+
+Expected time: **5–10 minutes**.
 
 1. **SSH into your agent's host** and run:
 
