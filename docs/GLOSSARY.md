@@ -37,7 +37,7 @@ Never publish v1.0.0 cold. Always run at least one CLP cycle first.
 ## Coherent Agent (CA)
 An agent that practices TSC (Triadic Self-Coherence):
 
-- Tracks α (self), β (relational), γ (temporal) coherence
+- Tracks α (PATTERN), β (RELATION), γ (EXIT/PROCESS) coherence
 - Reflects at multiple cadences (daily → yearly)
 - Performs the Coherence Walk to rebalance
 - Evolves deliberately, not randomly
@@ -73,7 +73,7 @@ A practice exercise under `dojo/` (for example `kata-01-hello-world-intro.md`). 
 Files under `state/` that record the current situation for this hub (for example peers, threads). Unlike specs, state is expected to change frequently.
 
 ## TSC (Triadic Self-Coherence)
-A framework for maintaining coherence across three axes: α (self), β (relational), γ (temporal). Originated by usurobor. Used in cn-agent for reflection and self-assessment.
+A framework for measuring coherence across three algebraically independent axes: α (PATTERN), β (RELATION), γ (EXIT/PROCESS). Originated by usurobor. Formal spec: tsc/spec/tsc-core.md. Used in cn-agent for reflection and self-assessment.
 
 ## α/β/γ (Alpha/Beta/Gamma)
 The three axes of coherence measurement from TSC Core:
