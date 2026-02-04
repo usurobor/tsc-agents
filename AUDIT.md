@@ -1,9 +1,9 @@
-# Project Audit – cn-agent v1.3.2
+# Project Audit – cn-agent v1.3.3
 
 **Date:** 2026-02-04
 **Branch:** `claude/project-audit-review-kdE3K`
 **Scope:** Full audit of design, code, documentation, and cross-file coherence.
-**Prior audits:** v1.0.0, v1.2.1 (same file, now replaced).
+**Prior audits:** v1.0.0, v1.2.1, v1.3.2 (same file, now replaced).
 
 ---
 
@@ -21,7 +21,7 @@ cn-agent is a **template repository** for bootstrapping AI agent hubs on the git
 
 **Overall assessment:** The project has evolved significantly since v1.2.1. Three releases (v1.3.0–v1.3.2) landed while the whitepaper was being iterated to v2.0.3. The reflect skill is the most architecturally significant addition — it operationalizes TSC from a measurement framework into a daily practice. The glossary has expanded substantially (6 new entries). ENGINEERING.md gained two important governance principles. The whitepaper (on its own branch) has converged to v2.0.3 with all previously-flagged contradictions resolved.
 
-The main remaining issues are: specification drift from new concepts introduced without corresponding whitepaper/spec updates (`memory/`, `state/practice/`), stale version numbers across files, ownership ambiguity between daily-routine and reflect for `state/reflections/`, the reflect kata not exercising the actual α/β/γ framework, and the same package.json/test/experiment gaps from v1.0.0.
+Since v1.3.2, three significant merges landed on master: reflect/daily-routine ownership resolution (sigma/reflect-ownership), glossary and docs alignment (sigma/truthify-docs), and the whitepaper v2.0.3 merge. All three HIGH findings from v1.3.2 are now resolved. The main remaining issues are: specification drift from new concepts (`memory/`, `state/practice/`) without whitepaper coverage, stale version numbers across files, and the same package.json/test/experiment gaps from v1.0.0.
 
 ---
 
@@ -49,7 +49,7 @@ Tracking what was fixed from the original audit:
 | # | v1.2.1 Finding | Status | Notes |
 |---|---------------|--------|-------|
 | 4.1 | Whitepaper two-repo contradictions | **Fixed** | Whitepaper v2.0.3 resolves all 4 items (§9 fork→CLI, §6 PRs→transport convenience, §10 PRs→push branch, §5.1 version→protocol minimum) |
-| 4.1 | Glossary stale (IDENTITY, dojo/) | **Partially fixed** | 6 new entries added; IDENTITY→PERSONALITY still not fixed; Kata still says `dojo/`; COHERENCE still not in Mindset definition |
+| 4.1 | Glossary stale (IDENTITY, dojo/) | **Fixed** | sigma/truthify-docs: IDENTITY→PERSONALITY fixed, Kata says `skills/<name>/kata.md`, COHERENCE in Mindset, cn-agent uses two-repo model, Thread says `threads/` |
 | 4.2 | BOOTSTRAP.md vs symlinks | **Superseded** | Master has moved past this; symlinks approach adopted |
 | 4.3 | package.json stale | **Open** | Still stale description; still missing repository, keywords, bugs, homepage |
 | 4.4 | skills/README.md version | **Open** | Still says v1.1.0 (should be v1.3.2) |
@@ -105,9 +105,9 @@ Two new principles:
 
 Timezone changed from optional hint to required field. Makes sense — daily-routine needs it for cron. Correctly motivated by a concrete downstream dependency.
 
-(Items 3.1–3.6 from v1.2.1 audit — COHERENCE.md, two-repo model, CLI rewrite, README dispatch, whitepaper grounding, spec cleanup — all still hold.)
+(Items 3.6–3.11 below are carried from v1.2.1 — COHERENCE.md, two-repo model, CLI rewrite, README dispatch, whitepaper grounding, spec cleanup — all still hold.)
 
-### 3.1 COHERENCE.md (mindsets/COHERENCE.md)
+### 3.6 COHERENCE.md (mindsets/COHERENCE.md)
 
 The strongest new addition to the project. Key qualities:
 
@@ -117,7 +117,7 @@ The strongest new addition to the project. Key qualities:
 - **Practical quick self-check**: PATTERN / RELATION / EXIT as a pre-output checklist.
 - **Links to source**: TSC and tsc-practice repos referenced directly.
 
-### 3.2 Two-Repo Model
+### 3.7 Two-Repo Model
 
 The hub/template separation is well-defined and consistently described across CLI, self-cohere, README, and AGENTS.md:
 
@@ -126,7 +126,7 @@ The hub/template separation is well-defined and consistently described across CL
 
 The CLI creates the hub. Self-cohere wires the agent to it. The template updates via `git pull`. Personal files can't be clobbered by template updates.
 
-### 3.3 CLI Rewrite (cli/index.js)
+### 3.8 CLI Rewrite (cli/index.js)
 
 The CLI is now a proper interactive tool:
 
@@ -137,7 +137,7 @@ The CLI is now a proper interactive tool:
 - Zero runtime dependencies; `spawn()` with array args (no shell injection)
 - `--help` and `--version` flags
 
-### 3.4 README 4-Path Dispatch
+### 3.9 README 4-Path Dispatch
 
 The README correctly identifies four audiences and routes each:
 
@@ -148,7 +148,7 @@ The README correctly identifies four audiences and routes each:
 
 The navigation table at top is clean and uses emoji sparingly for visual scanning.
 
-### 3.5 Whitepaper TSC Grounding
+### 3.10 Whitepaper TSC Grounding
 
 The whitepaper now explicitly defines git-CN as a network of **coherent agents** following TSC. Key additions:
 
@@ -157,7 +157,7 @@ The whitepaper now explicitly defines git-CN as a network of **coherent agents**
 - §5.1 lists COHERENCE.md in the mindsets interpretation
 - §8.3 grounds reputation metrics in TSC axes (pattern, relation, process)
 
-### 3.6 Spec File Cleanup
+### 3.11 Spec File Cleanup
 
 All spec files now use placeholder markers suitable for a template:
 
@@ -171,46 +171,24 @@ All spec files now use placeholder markers suitable for a template:
 
 ## 4. Issues Found
 
-### 4.1 HIGH: Specification Drift — New Concepts Without Spec Coverage
+### 4.1 ~~HIGH~~ → PARTIALLY RESOLVED: Specification Drift — New Concepts Without Spec Coverage
 
-The v1.3.x cycle introduced three new directory concepts that have no coverage in the whitepaper, protocol spec, or glossary:
+The v1.3.x cycle introduced three new directory concepts. **Ownership conflict resolved** by sigma/reflect-ownership: reflect owns `state/reflections/` schema, daily-routine orchestrates but delegates to reflect. Both SKILL.md files now have explicit "Ownership & Schema" sections. Glossary now includes `memory/`, `state/reflections/`, `state/practice/`.
 
-**`memory/`** — Introduced by daily-routine SKILL.md as "Raw session logs, what happened." Not mentioned in any spec file, not in the glossary, not in the whitepaper's §4.1 repo layout. This is a new first-class directory appearing without specification.
+**Still open:** `memory/` and `state/practice/` have no coverage in the whitepaper's §4.1 repo layout or protocol spec. These are cn-agent conventions (daily-routine labels them as such) but are not yet documented as protocol-level or explicitly scoped as implementation-specific.
 
-**`state/practice/`** — Introduced by daily-routine SKILL.md as "Kata completions with commit evidence." Not in the glossary. The whitepaper's `state/` only contains `peers.json`. This is state with no schema.
+### 4.2 ~~HIGH~~ → RESOLVED: reflect Kata Does Not Exercise the Framework
 
-**`state/reflections/`** — Introduced by both reflect and daily-routine. Ownership is ambiguous: daily-routine creates the files, reflect defines the framework and templates. Neither SKILL.md references the other as the canonical owner. A new agent following daily-routine would create `state/reflections/YYYY-MM-DD.md` with a "What happened / Coherence check / Tomorrow" template; following reflect would create the same file with an "α/β/γ scoring" template. These are incompatible structures for the same file path.
+**Fixed** by sigma/reflect-ownership. The reflect kata (kata 02) now uses the canonical α/β/γ framework: PATTERN/RELATION/EXIT scores, Σ summary, → Next. EXIT criteria require the real template structure. The simplified "What I did / What I noticed / Raw takeaway" warmup was removed.
 
-**Impact:** An agent bootstrapping from the template and running both skills will hit a conflict on day one. This is a RELATION (β) failure — the parts don't reveal the same system.
+### 4.3 ~~HIGH~~ → RESOLVED: Glossary Stale Entries (Carried Over)
 
-### 4.2 HIGH: reflect Kata Does Not Exercise the Framework
+**Fixed** by sigma/truthify-docs. All four stale entries addressed:
 
-The reflect kata (kata 02) uses a simplified template:
-```
-## What I did
-## What I noticed
-## Raw takeaway
-```
-
-The reflect SKILL.md defines the actual daily template as:
-```
-## α — PATTERN 🧩: [A-F]
-## β — RELATION 🤝: [A-F]
-## γ — EXIT 🚪: [A-F]
-## Σ — Summary
-## → Next
-```
-
-These are structurally different. A new agent completing kata 02 will not have exercised the α/β/γ scoring, the Coherence Walk, or the Σ summary. The kata is a warmup, not a test of the skill. Either the kata should use the real template, or the kata should explicitly state it's a pre-framework warmup and point to a follow-up kata that uses the real template.
-
-### 4.3 HIGH: Glossary Stale Entries (Carried Over)
-
-The 6 new entries are good, but the old stale entries from v1.2.1 are **still not fixed**:
-
-- **Mindset** definition: example lists "IDENTITY" — renamed to PERSONALITY in v1.2.0. COHERENCE (the most important mindset) still not mentioned.
-- **Kata** definition: says katas live under `dojo/` — they live under `skills/<name>/kata.md`. DOJO.md itself says "Katas are bundled with their skills under `skills/<name>/kata.md`" — the glossary contradicts the dojo.
-- **cn-agent** definition: "Other agents fork or import cn-agent" — contradicts the two-repo model. Agents don't fork the template; the CLI creates a separate hub.
-- **Thread** definition: says `state/threads/` — the whitepaper protocol specifies `threads/` at repo root.
+- **Mindset**: Now lists COHERENCE.md and ENGINEERING.md (not IDENTITY).
+- **Kata**: Now says `skills/<skill-name>/kata.md` (not `dojo/`).
+- **cn-agent**: Now describes two-repo model (not "fork or import").
+- **Thread**: Now says `threads/` with legacy note about `state/threads/`.
 
 ### 4.4 MEDIUM: reflect SKILL.md Length and Template Duplication
 
@@ -310,7 +288,7 @@ One line changed from em-dash (`—`) to hyphen (`-`). Other lines still use em-
 
 ### 5.1 PATTERN (α) — Structural Consistency
 
-**Grade: A-**
+**Grade: A-** (unchanged from v1.3.2)
 
 The repo structure is clean and consistent:
 - 5 spec files, 6 mindsets, 6 skills, 3 docs — all follow their respective formats
@@ -318,16 +296,17 @@ The repo structure is clean and consistent:
 - Placeholder markers in template specs
 - Commit messages follow a consistent style
 - New skills (reflect, daily-routine) follow the established SKILL.md + kata.md pattern
+- Glossary stale entries now fixed
 
-Deductions: Version numbers inconsistent across 4+ files (skills/README says v1.1.0, DOJO says v1.2.0, configure-agent header says v1.1.0 but its own CHANGELOG says v1.2.0). Glossary still has stale entries alongside the new ones.
+Deductions: Version numbers still inconsistent across 4+ files (skills/README says v1.1.0, DOJO says v1.2.0, configure-agent header says v1.1.0 but its own CHANGELOG says v1.2.0).
 
 ### 5.2 RELATION (β) — Alignment Between Parts
 
-**Grade: B+**
+**Grade: A-** (up from B+ in v1.3.2)
 
-The major architectural decisions remain consistently described. The whitepaper v2.0.3 resolves all previously-flagged contradictions. The new ENGINEERING.md principles ("assume good intent", "never self-merge") are well-motivated. The reflect skill correctly references TSC Core and CLP specs.
+The major architectural decisions remain consistently described. The whitepaper v2.0.3 is now merged to master. Reflect/daily-routine ownership is cleanly resolved with explicit "Ownership & Schema" sections in both SKILL.md files. Glossary stale entries fixed. The reflect kata now exercises the actual α/β/γ framework.
 
-Deductions: daily-routine and reflect both claim `state/reflections/` with incompatible templates (§4.1). The reflect kata doesn't exercise the actual framework (§4.2). Three new directory concepts (`memory/`, `state/practice/`, `state/reflections/`) introduced without spec or glossary coverage. Glossary still has 4 stale entries (§4.3).
+Deductions: `memory/` and `state/practice/` still not covered in whitepaper §4.1 (though now documented as cn-agent conventions). Version numbers still out of sync across files.
 
 ### 5.3 EXIT/PROCESS (γ) — Evolution Stability
 
@@ -340,38 +319,34 @@ Deductions: The reflect skill at 352 lines is the longest file in the project an
 ### 5.4 Aggregate
 
 ```
-C_Σ = (A- · B+ · B+)^(1/3) ≈ B+ (intuition-level)
+C_Σ = (A- · A- · B+)^(1/3) ≈ A-/B+ (intuition-level)
 ```
 
-Stable at B+ since v1.2.1. The whitepaper resolution and reflect skill are wins; the specification drift from new concepts and stale glossary entries balance them out. The path to A- is: resolve the reflect/daily-routine ownership conflict, fix the glossary, and align version numbers.
+Up from B+ in v1.3.2. The three HIGH findings are all resolved. The path to solid A- is: align version numbers across files (the last systematic inconsistency) and clarify `memory/`/`state/practice/` scope (protocol vs implementation convention).
 
 ---
 
 ## 6. Priority Recommendations
 
-### Must Address
+### Must Address (all resolved)
 
-1. **Resolve reflect / daily-routine ownership of `state/reflections/`.** Either:
-   - daily-routine creates files, reflect defines the template (document this dependency explicitly in both SKILL.md files), or
-   - daily-routine delegates reflection entirely to reflect and only handles `memory/` and `state/practice/`, or
-   - Merge the skills (daily-routine becomes a thin wrapper that invokes reflect for the reflection step).
-   The current state will produce conflicting file structures on day one.
+1. ~~**Resolve reflect / daily-routine ownership of `state/reflections/`.**~~ **RESOLVED** — sigma/reflect-ownership merged. reflect owns schema, daily-routine orchestrates.
 
-2. **Fix reflect kata to exercise the actual framework.** The kata should use α/β/γ scoring, Σ summary, and → Next (the real daily template), not the simplified "What I did / What I noticed / Raw takeaway" structure. Alternatively, label kata 02 as "pre-framework warmup" and add kata 03 that uses the real template.
+2. ~~**Fix reflect kata to exercise the actual framework.**~~ **RESOLVED** — sigma/reflect-ownership merged. Kata 02 now uses α/β/γ.
 
-3. **Fix glossary stale entries.** IDENTITY → PERSONALITY, `dojo/` → `skills/<name>/kata.md`, add COHERENCE to Mindset definition, fix cn-agent "fork or import" → two-repo model, fix Thread `state/threads/` → `threads/` (per whitepaper protocol).
+3. ~~**Fix glossary stale entries.**~~ **RESOLVED** — sigma/truthify-docs merged. All four stale entries fixed.
 
-4. **Merge whitepaper v2.0.3.** The `claude/whitepaper-v2-kdE3K` branch has the converged whitepaper. Per "never self-merge" principle, this needs review before merge.
+4. ~~**Merge whitepaper v2.0.3.**~~ **RESOLVED** — Whitepaper v2.0.3 merged to master (commit `2285fd8`).
 
 ### Should Address
 
-5. **Add `memory/` and `state/practice/` to glossary and whitepaper §4.1** (or decide they're implementation-specific and not protocol-level). If they're protocol-level, they belong in Appendix A. If they're implementation-specific, document them as cn-agent extensions, not protocol requirements.
+5. **Update version numbers** across skills/README.md (v1.1.0), DOJO.md (v1.2.0), GLOSSARY.md (v1.2.0), configure-agent SKILL.md header (v1.1.0→v1.2.0). These are document-local versions, not the template's semver — each file should track its own change history. This is the top remaining systematic inconsistency.
 
-6. **Update version numbers** across skills/README.md (v1.1.0→v1.3.2), DOJO.md (v1.2.0→v1.3.2), GLOSSARY.md (v1.2.0→v1.3.2), configure-agent SKILL.md header (v1.1.0→v1.2.0).
+6. **Clarify `memory/` and `state/practice/` scope.** Glossary now has entries (added by sigma/reflect-ownership), but whitepaper §4.1 still doesn't mention them. Either add them to Appendix A as cn-agent conventions, or explicitly note in daily-routine SKILL.md that these are implementation-specific (not protocol-level).
 
 7. **Document the cron runtime assumption** in daily-routine SKILL.md TERMS. Not all agents have access to the JSON cron format shown.
 
-8. **Explain DOJO.md kata numbering.** State the belt→number mapping or fill the gaps.
+8. **Explain DOJO.md kata numbering.** State the belt→number mapping or fill the gaps (01→02→13 is unexplained).
 
 9. **Update package.json.** Fix stale description; add `repository`, `keywords`, `bugs`, `homepage`.
 
