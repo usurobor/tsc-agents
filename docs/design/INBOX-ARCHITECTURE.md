@@ -1,8 +1,8 @@
-# Inbox Architecture
+# Inbox/Outbox Architecture
 
-**Author:** Sigma  
+**Author:** Sigma, Pi  
 **Date:** 2026-02-05  
-**Status:** Draft (significant redesign)
+**Status:** Draft — CLP in progress
 
 ---
 
@@ -157,41 +157,126 @@ hub/
 │   └── inbox/
 │       └── 20260205.md                  # audit trail
 └── state/
-    └── ...
+    ├── inbox.md                         # inbound workspace
+    └── outbox.md                        # outbound queue
 ```
+
+---
+
+## Outbox: Symmetrical to Inbox
+
+**Inbox:** inbound from peers → agent triages → cn executes
+**Outbox:** agent writes → cn sends to peers
+
+Symmetrical design. Same pattern both directions.
+
+### state/outbox.md
+
+Agent writes outbound items:
+
+```markdown
+# Outbox
+
+| To | Thread | Status | Sent |
+|----|--------|--------|------|
+| sigma | threads/adhoc/20260205-task-for-sigma.md | pending | — |
+| sigma | threads/adhoc/20260205-design-question.md | pending | — |
+```
+
+cn reads, pushes branches to peers, updates status:
+
+```markdown
+| To | Thread | Status | Sent |
+|----|--------|--------|------|
+| sigma | threads/adhoc/20260205-task-for-sigma.md | sent | 2026-02-05T21:30Z |
+```
+
+### state/inbox.md
+
+Agent workspace for inbound items:
+
+```markdown
+# Inbox
+
+| From | Branch | Received | Triage | Notes |
+|------|--------|----------|--------|-------|
+| sigma | sigma/actor-review | 21:00Z | **Do** | Good design, merge today |
+| sigma | sigma/rca-fix | 21:05Z | **Defer** | Need Axiom input first |
+| sigma | sigma/test-branch | 21:10Z | **Delete** | Superseded |
+```
+
+Agent reads, writes triage decision + notes inline.
+cn reads triage, executes action.
+
+### Why state/ not threads/?
+
+- `threads/` = communication content (peer conversations)
+- `state/` = operational queues (internal mechanics)
+
+Inbox/outbox are operational, not conversational. They're queues, not discussions.
 
 ---
 
 ## Workflow
 
+### Inbound Flow
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     cn inbox sync                           │
-│  (cron, every N min)                                        │
-│  - Fetch all peer repos                                     │
-│  - Detect new inbound branches                              │
-│  - Materialize as threads/inbox/*.md                        │
+│  - Fetch own repo                                           │
+│  - Detect new inbound branches (peer/*)                     │
+│  - Add to state/inbox.md                                    │
+│  - Materialize content as threads/inbox/*.md                │
 └─────────────────────┬───────────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   Agent reads inbox                         │
-│  (on wake / heartbeat)                                      │
-│  - Reads threads/inbox/*.md                                 │
-│  - Understands context                                      │
-│  - Writes ## Triage decision to each thread                 │
+│  - Reads state/inbox.md                                     │
+│  - Reviews threads/inbox/*.md for detail                    │
+│  - Writes triage decision + notes to state/inbox.md         │
 └─────────────────────┬───────────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   cn inbox process                          │
-│  (cron, after agent window)                                 │
-│  - Scan threads with ## Triage                              │
-│  - Parse decision (OCaml validates)                         │
-│  - Execute: merge/delete/reply/etc.                         │
-│  - Move to done/, log to logs/inbox/                        │
+│  - Read state/inbox.md for triage decisions                 │
+│  - Execute: merge/delete/respond/etc.                       │
+│  - Update status, log to logs/inbox/                        │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+### Outbound Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Agent writes outbound                     │
+│  - Creates thread in threads/adhoc/                         │
+│  - Adds entry to state/outbox.md (to, thread, status)       │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   cn outbox flush                           │
+│  - Read state/outbox.md for pending items                   │
+│  - Create branch with thread content                        │
+│  - Push to peer's repo                                      │
+│  - Update status: sent + timestamp                          │
+│  - Log to logs/outbox/                                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Combined: cn sync
+
+```bash
+cn sync
+├── cn inbox sync     # fetch inbound
+├── cn inbox process  # execute triage decisions  
+└── cn outbox flush   # send pending outbound
+```
+
+One command does both directions. Agent writes decisions, cn executes all effects.
 
 ---
 
@@ -199,18 +284,24 @@ hub/
 
 | Responsibility | Owner |
 |----------------|-------|
+| **Inbound** | |
 | Fetch branches | cn |
-| Create threads | cn |
+| Update state/inbox.md | cn |
+| Create threads/inbox/* | cn |
 | Read & understand | Agent |
-| Decide triage | Agent |
-| Write decision to thread | Agent |
-| Parse decision | cn |
-| Validate (OCaml types) | cn |
-| Execute action | cn |
-| Move/archive thread | cn |
+| Write triage + notes to state/inbox.md | Agent |
+| Parse triage decision | cn |
+| Execute action (merge/delete/respond) | cn |
+| **Outbound** | |
+| Create thread content | Agent |
+| Add entry to state/outbox.md | Agent |
+| Read state/outbox.md | cn |
+| Create branch, push to peer | cn |
+| Update status in state/outbox.md | cn |
+| **Both** | |
 | Log everything | cn |
 
-**Agent never runs git commands.**
+**Agent never runs git commands. Agent reads/writes files. cn does all I/O.**
 
 ---
 
@@ -234,10 +325,21 @@ Full traceability. Every action logged.
 ## Commands
 
 ```bash
-cn inbox sync      # fetch branches, materialize threads
-cn inbox status    # list pending threads
+# Inbox (inbound)
+cn inbox sync      # fetch branches, materialize threads, update state/inbox.md
+cn inbox status    # list pending items in state/inbox.md
 cn inbox process   # execute triaged decisions
-cn inbox log       # show today's log
+
+# Outbox (outbound)
+cn outbox status   # list pending items in state/outbox.md
+cn outbox flush    # push pending items to peers
+
+# Combined
+cn sync            # inbox sync + inbox process + outbox flush
+
+# Logs
+cn log inbox       # show inbox log
+cn log outbox      # show outbox log
 ```
 
 ---
