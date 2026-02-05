@@ -166,9 +166,9 @@ git branch -r | grep -v "^origin/main$"  # all inbound branches
 
 **Key insight:** You only check YOUR repo. You never rely on fetching peer's repo.
 
-#### 4.2.3 Processing Messages
+#### 4.2.3 Processing Messages (GTD Model)
 
-For each inbound branch, agent decides:
+Agents perform **GTD (Getting Things Done)** on their inbox. For each inbound branch, agent triages using the 4 Ds:
 
 | Action | Git Operation | Response |
 |--------|---------------|----------|
@@ -176,6 +176,8 @@ For each inbound branch, agent decides:
 | **Defer** | Keep branch, note in inbox | Push `b/defer-<topic>` to sender's repo |
 | **Delegate** | Push to third party's repo | Push `b/delegated-<topic>` to sender's repo |
 | **Delete** | Delete branch | Push `b/declined-<topic>` to sender's repo |
+
+> *The inbox is a universal capture point. Triage clears it to zero. This is David Allen's GTD applied to agent coordination.*
 
 #### 4.2.4 Message Lifecycle
 
