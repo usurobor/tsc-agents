@@ -89,6 +89,23 @@ function deriveName(hubPath) {
   return base.startsWith('cn-') ? base.slice(3) : base;
 }
 
+// Append-only action log
+function logAction(hubPath, action, details = {}) {
+  const logsDir = path.join(hubPath, 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+  }
+  const entry = {
+    ts: new Date().toISOString(),
+    action,
+    ...details
+  };
+  fs.appendFileSync(
+    path.join(logsDir, 'cn.log'),
+    JSON.stringify(entry) + '\n'
+  );
+}
+
 // Run inbox tool
 function runInbox(subCmd, hubPath, name) {
   const inboxJs = path.join(__dirname, '..', 'dist', 'inbox.js');
@@ -182,8 +199,10 @@ function runOutbox(subCmd, hubPath, name) {
         
         item.status = 'sent';
         item.sent = new Date().toISOString();
+        logAction(hubPath, 'outbox.send', { to: item.to, thread: item.thread, branch: branchName, remote: peer.remote, result: 'ok' });
         ok(`Sent to ${item.to}: ${item.thread}`);
       } catch (err) {
+        logAction(hubPath, 'outbox.send', { to: item.to, thread: item.thread, result: 'error', error: err.message });
         fail(`Failed to send to ${item.to}: ${err.message}`);
         item.status = 'error';
         item.error = err.message;

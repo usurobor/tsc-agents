@@ -25194,88 +25194,79 @@ var require_inbox_lib = __commonJS({
           return {
             hd: {
               TAG: (
-                /* Git_branch_delete */
-                3
+                /* Git_remote_delete */
+                4
               ),
-              _0: branch
+              _0: "origin",
+              _1: branch
             },
             tl: {
               hd: {
                 TAG: (
-                  /* Git_remote_delete */
-                  4
+                  /* Log_append */
+                  7
                 ),
-                _0: "origin",
-                _1: branch
-              },
-              tl: {
-                hd: {
+                _0: log_path,
+                _1: Curry2._2(Stdlib__Printf2.sprintf({
                   TAG: (
-                    /* Log_append */
-                    7
+                    /* Format */
+                    0
                   ),
-                  _0: log_path,
-                  _1: Curry2._2(Stdlib__Printf2.sprintf({
+                  _0: {
                     TAG: (
-                      /* Format */
-                      0
+                      /* String_literal */
+                      11
                     ),
-                    _0: {
+                    _0: "deleted: ",
+                    _1: {
                       TAG: (
-                        /* String_literal */
-                        11
+                        /* String */
+                        2
                       ),
-                      _0: "deleted: ",
+                      _0: (
+                        /* No_padding */
+                        0
+                      ),
                       _1: {
                         TAG: (
-                          /* String */
-                          2
+                          /* String_literal */
+                          11
                         ),
-                        _0: (
-                          /* No_padding */
-                          0
-                        ),
+                        _0: " (",
                         _1: {
                           TAG: (
-                            /* String_literal */
-                            11
+                            /* String */
+                            2
                           ),
-                          _0: " (",
+                          _0: (
+                            /* No_padding */
+                            0
+                          ),
                           _1: {
                             TAG: (
-                              /* String */
-                              2
+                              /* Char_literal */
+                              12
                             ),
                             _0: (
-                              /* No_padding */
-                              0
+                              /* ')' */
+                              41
                             ),
-                            _1: {
-                              TAG: (
-                                /* Char_literal */
-                                12
-                              ),
-                              _0: (
-                                /* ')' */
-                                41
-                              ),
-                              _1: (
-                                /* End_of_format */
-                                0
-                              )
-                            }
+                            _1: (
+                              /* End_of_format */
+                              0
+                            )
                           }
                         }
                       }
-                    },
-                    _1: "deleted: %s (%s)"
-                  }), branch, triage._0._0)
-                },
-                tl: (
-                  /* [] */
-                  0
-                )
-              }
+                    }
+                  },
+                  _1: "deleted: %s (%s)"
+                }), branch, triage._0._0)
+              },
+              tl: (
+                /* [] */
+                0
+              )
             }
           };
         case /* Defer */
@@ -26225,71 +26216,11 @@ function run_check(hub_path, my_name, peers) {
   }
 }
 var Fs_write = {};
-function execute_action(action) {
+function execute_action(hub_path, action) {
   try {
     switch (action.TAG) {
       case /* Git_checkout */
       0:
-        return Stdlib__Option.is_some(run_cmd(Curry._1(Stdlib__Printf.sprintf({
-          TAG: (
-            /* Format */
-            0
-          ),
-          _0: {
-            TAG: (
-              /* String_literal */
-              11
-            ),
-            _0: "git checkout ",
-            _1: {
-              TAG: (
-                /* String */
-                2
-              ),
-              _0: (
-                /* No_padding */
-                0
-              ),
-              _1: (
-                /* End_of_format */
-                0
-              )
-            }
-          },
-          _1: "git checkout %s"
-        }), action._0)));
-      case /* Git_merge */
-      1:
-        return Stdlib__Option.is_some(run_cmd(Curry._1(Stdlib__Printf.sprintf({
-          TAG: (
-            /* Format */
-            0
-          ),
-          _0: {
-            TAG: (
-              /* String_literal */
-              11
-            ),
-            _0: "git merge ",
-            _1: {
-              TAG: (
-                /* String */
-                2
-              ),
-              _0: (
-                /* No_padding */
-                0
-              ),
-              _1: (
-                /* End_of_format */
-                0
-              )
-            }
-          },
-          _1: "git merge %s"
-        }), action._0)));
-      case /* Git_push */
-      2:
         return Stdlib__Option.is_some(run_cmd(Curry._2(Stdlib__Printf.sprintf({
           TAG: (
             /* Format */
@@ -26300,87 +26231,7 @@ function execute_action(action) {
               /* String_literal */
               11
             ),
-            _0: "git push ",
-            _1: {
-              TAG: (
-                /* String */
-                2
-              ),
-              _0: (
-                /* No_padding */
-                0
-              ),
-              _1: {
-                TAG: (
-                  /* Char_literal */
-                  12
-                ),
-                _0: (
-                  /* ' ' */
-                  32
-                ),
-                _1: {
-                  TAG: (
-                    /* String */
-                    2
-                  ),
-                  _0: (
-                    /* No_padding */
-                    0
-                  ),
-                  _1: (
-                    /* End_of_format */
-                    0
-                  )
-                }
-              }
-            }
-          },
-          _1: "git push %s %s"
-        }), action._0, action._1)));
-      case /* Git_branch_delete */
-      3:
-        return Stdlib__Option.is_some(run_cmd(Curry._1(Stdlib__Printf.sprintf({
-          TAG: (
-            /* Format */
-            0
-          ),
-          _0: {
-            TAG: (
-              /* String_literal */
-              11
-            ),
-            _0: "git branch -d ",
-            _1: {
-              TAG: (
-                /* String */
-                2
-              ),
-              _0: (
-                /* No_padding */
-                0
-              ),
-              _1: (
-                /* End_of_format */
-                0
-              )
-            }
-          },
-          _1: "git branch -d %s"
-        }), action._0)));
-      case /* Git_remote_delete */
-      4:
-        return Stdlib__Option.is_some(run_cmd(Curry._2(Stdlib__Printf.sprintf({
-          TAG: (
-            /* Format */
-            0
-          ),
-          _0: {
-            TAG: (
-              /* String_literal */
-              11
-            ),
-            _0: "git push ",
+            _0: "cd ",
             _1: {
               TAG: (
                 /* String */
@@ -26395,7 +26246,7 @@ function execute_action(action) {
                   /* String_literal */
                   11
                 ),
-                _0: " --delete ",
+                _0: " && git checkout ",
                 _1: {
                   TAG: (
                     /* String */
@@ -26413,8 +26264,233 @@ function execute_action(action) {
               }
             }
           },
-          _1: "git push %s --delete %s"
-        }), action._0, action._1)));
+          _1: "cd %s && git checkout %s"
+        }), hub_path, action._0)));
+      case /* Git_merge */
+      1:
+        return Stdlib__Option.is_some(run_cmd(Curry._2(Stdlib__Printf.sprintf({
+          TAG: (
+            /* Format */
+            0
+          ),
+          _0: {
+            TAG: (
+              /* String_literal */
+              11
+            ),
+            _0: "cd ",
+            _1: {
+              TAG: (
+                /* String */
+                2
+              ),
+              _0: (
+                /* No_padding */
+                0
+              ),
+              _1: {
+                TAG: (
+                  /* String_literal */
+                  11
+                ),
+                _0: " && git merge ",
+                _1: {
+                  TAG: (
+                    /* String */
+                    2
+                  ),
+                  _0: (
+                    /* No_padding */
+                    0
+                  ),
+                  _1: (
+                    /* End_of_format */
+                    0
+                  )
+                }
+              }
+            }
+          },
+          _1: "cd %s && git merge %s"
+        }), hub_path, action._0)));
+      case /* Git_push */
+      2:
+        return Stdlib__Option.is_some(run_cmd(Curry._3(Stdlib__Printf.sprintf({
+          TAG: (
+            /* Format */
+            0
+          ),
+          _0: {
+            TAG: (
+              /* String_literal */
+              11
+            ),
+            _0: "cd ",
+            _1: {
+              TAG: (
+                /* String */
+                2
+              ),
+              _0: (
+                /* No_padding */
+                0
+              ),
+              _1: {
+                TAG: (
+                  /* String_literal */
+                  11
+                ),
+                _0: " && git push ",
+                _1: {
+                  TAG: (
+                    /* String */
+                    2
+                  ),
+                  _0: (
+                    /* No_padding */
+                    0
+                  ),
+                  _1: {
+                    TAG: (
+                      /* Char_literal */
+                      12
+                    ),
+                    _0: (
+                      /* ' ' */
+                      32
+                    ),
+                    _1: {
+                      TAG: (
+                        /* String */
+                        2
+                      ),
+                      _0: (
+                        /* No_padding */
+                        0
+                      ),
+                      _1: (
+                        /* End_of_format */
+                        0
+                      )
+                    }
+                  }
+                }
+              }
+            }
+          },
+          _1: "cd %s && git push %s %s"
+        }), hub_path, action._0, action._1)));
+      case /* Git_branch_delete */
+      3:
+        return Stdlib__Option.is_some(run_cmd(Curry._2(Stdlib__Printf.sprintf({
+          TAG: (
+            /* Format */
+            0
+          ),
+          _0: {
+            TAG: (
+              /* String_literal */
+              11
+            ),
+            _0: "cd ",
+            _1: {
+              TAG: (
+                /* String */
+                2
+              ),
+              _0: (
+                /* No_padding */
+                0
+              ),
+              _1: {
+                TAG: (
+                  /* String_literal */
+                  11
+                ),
+                _0: " && git branch -d ",
+                _1: {
+                  TAG: (
+                    /* String */
+                    2
+                  ),
+                  _0: (
+                    /* No_padding */
+                    0
+                  ),
+                  _1: (
+                    /* End_of_format */
+                    0
+                  )
+                }
+              }
+            }
+          },
+          _1: "cd %s && git branch -d %s"
+        }), hub_path, action._0)));
+      case /* Git_remote_delete */
+      4:
+        return Stdlib__Option.is_some(run_cmd(Curry._3(Stdlib__Printf.sprintf({
+          TAG: (
+            /* Format */
+            0
+          ),
+          _0: {
+            TAG: (
+              /* String_literal */
+              11
+            ),
+            _0: "cd ",
+            _1: {
+              TAG: (
+                /* String */
+                2
+              ),
+              _0: (
+                /* No_padding */
+                0
+              ),
+              _1: {
+                TAG: (
+                  /* String_literal */
+                  11
+                ),
+                _0: " && git push ",
+                _1: {
+                  TAG: (
+                    /* String */
+                    2
+                  ),
+                  _0: (
+                    /* No_padding */
+                    0
+                  ),
+                  _1: {
+                    TAG: (
+                      /* String_literal */
+                      11
+                    ),
+                    _0: " --delete ",
+                    _1: {
+                      TAG: (
+                        /* String */
+                        2
+                      ),
+                      _0: (
+                        /* No_padding */
+                        0
+                      ),
+                      _1: (
+                        /* End_of_format */
+                        0
+                      )
+                    }
+                  }
+                }
+              }
+            }
+          },
+          _1: "cd %s && git push %s --delete %s"
+        }), hub_path, action._0, action._1)));
       case /* File_write */
       5:
         Fs.writeFileSync(action._0, action._1);
@@ -26467,7 +26543,7 @@ function execute_action(action) {
     return false;
   }
 }
-function execute_actions(actions) {
+function execute_actions(hub_path, actions) {
   let _param = actions;
   while (true) {
     const param = _param;
@@ -26503,7 +26579,7 @@ function execute_actions(actions) {
       },
       _1: "  \xE2\x86\x92 %s"
     }), Inbox_lib.string_of_atomic_action(action)));
-    if (!execute_action(action)) {
+    if (!execute_action(hub_path, action)) {
       return false;
     }
     _param = param.tl;
@@ -26714,7 +26790,7 @@ function materialize_branch(hub_path, my_name, peer, branch) {
     },
     _1: "Materializing %s..."
   }), branch));
-  if (execute_actions(actions)) {
+  if (execute_actions(hub_path, actions)) {
     console.log("  \xE2\x9C\x93 Thread created");
   } else {
     console.log("  \xE2\x9C\x97 Failed to create thread");
@@ -27028,35 +27104,7 @@ function run_flush(hub_path, _my_name, _peers) {
         Stdlib__List.iter((function(prim) {
           console.log(prim);
         }), Inbox_lib.format_action_plan(actions));
-        run_cmd(Curry._1(Stdlib__Printf.sprintf({
-          TAG: (
-            /* Format */
-            0
-          ),
-          _0: {
-            TAG: (
-              /* String_literal */
-              11
-            ),
-            _0: "cd ",
-            _1: {
-              TAG: (
-                /* String */
-                2
-              ),
-              _0: (
-                /* No_padding */
-                0
-              ),
-              _1: (
-                /* End_of_format */
-                0
-              )
-            }
-          },
-          _1: "cd %s"
-        }), hub_path));
-        if (execute_actions(actions)) {
+        if (execute_actions(hub_path, actions)) {
           run_cmd(Curry._1(Stdlib__Printf.sprintf({
             TAG: (
               /* Format */
