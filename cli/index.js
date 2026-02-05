@@ -153,12 +153,12 @@ function isGitRepo(dir) {
     const dots = '.'.repeat(Math.max(1, 20 - label.length));
     if (status === true) {
       const info = detail ? ` ${dim(`(${detail})`)}` : '';
-      console.log(`  ${label}${dots} ${green('yes')}${info}`);
+      console.log(dim(`  ${label}${dots}`) + ` ${green('yes')}${info}`);
     } else if (status === false) {
-      console.log(`  ${label}${dots} ${red('no')}`);
+      console.log(dim(`  ${label}${dots}`) + ` ${red('no')}`);
     } else {
       // skipped (dependency not met)
-      console.log(`  ${label}${dots} ${dim('--')}`);
+      console.log(dim(`  ${label}${dots} --`));
     }
   }
 
@@ -200,7 +200,7 @@ function isGitRepo(dir) {
 
   try {
     console.log(bold(cyan(`cn-agent-setup v${VERSION}`)));
-    console.log(dim('Checking prerequisites...'));
+    console.log(bold('Checking prerequisites...'));
 
     // Collect all check results
     const checks = {};
@@ -272,7 +272,7 @@ function isGitRepo(dir) {
 
     if (failed.length > 0) {
       // Show install instructions for each failure (compact)
-      console.log(red(`Missing: ${failed.join(', ')}`));
+      console.log(bold(red(`Missing: ${failed.join(', ')}`)));
       for (const name of failed) {
         console.log(bold(`${name}:`));
         for (const line of installInstructions[name]) {
