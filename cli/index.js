@@ -318,6 +318,12 @@ function isGitRepo(dir) {
       }
       console.log('');
       console.log(gray('Re-run to continue: npx @usurobor/cn-agent-setup'));
+      
+      // Machine-readable footer for automation/debugging
+      const ok = Object.entries(checks).filter(([,s]) => s === true).map(([n]) => n.replace(' ', '_'));
+      const blocked = Object.entries(checks).filter(([,s]) => s === 'blocked' || s === null).map(([n]) => n.replace(' ', '_'));
+      console.log('');
+      console.log(gray(`[status] ok=${ok.join(',')} blocked=${blocked.join(',')} missing=${failed.map(n => n.replace(' ', '_')).join(',')} version=${VERSION}`));
       console.log('');
       process.exit(1);
     }
