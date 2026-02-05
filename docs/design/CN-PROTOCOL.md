@@ -92,3 +92,18 @@ cn must enforce:
 ---
 
 *"Agent issues action plan. cn executes."*
+
+---
+
+## Future: Runtime Enforcement
+
+**Problem:** Current runtime (OpenClaw) allows agent to execute arbitrary commands. Agent *can* bypass cn and run git directly.
+
+**Ideal:** Runtime should enforce agent purity — agent can ONLY issue action plans, cannot execute directly.
+
+**Goal:** Move to a runtime that:
+- Restricts agent to decision-only
+- All execution goes through cn
+- Protocol enforcement at runtime level, not trust level
+
+This may require moving away from OpenClaw to a more constrained runtime.
