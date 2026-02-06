@@ -1,61 +1,57 @@
 # review
 
-Review code from peers. Clear verdicts, actionable feedback.
+Review code from peers. Clear verdicts based on checklist compliance.
 
-## Criteria
+## Process
 
-| Check | Question |
-|-------|----------|
-| Purpose | Solves stated problem? |
-| Simplicity | Simplest solution? |
-| Necessity | No unnecessary additions? |
-| Types | Correct and semantic? |
-| Edge cases | Handled? |
-| Tests | Tested? |
-| History | Clean commits? |
+1. Read diff and commit messages
+2. Run through checklists (see `checklists/`)
+3. Record violations with severity
+4. Determine verdict based on worst violation
 
-## Compliance Checks
+## Checklists
 
-Before approving, verify no violations of:
+All in `checklists/`:
 
-**Code Quality:**
-- **FUNCTIONAL.md** — no `ref`, no `with _ ->`, no `List.hd`, pattern match on bool
-- **ENGINEERING.md** — KISS, YAGNI, done > perfect
-- **skills/ocaml** — pure in `_lib.ml`, FFI in main, specific exceptions
+| Checklist | Scope |
+|-----------|-------|
+| functional.md | No `ref`, pattern matching, pipelines |
+| ocaml.md | Pure/FFI separation, tests, bundle |
+| engineering.md | KISS, YAGNI, no self-merge |
+| testing.md | Coverage, `dune runtest` |
+| documenting.md | Docs match code, versions |
 
-**Testing:**
-- **skills/testing** — new functions tested, edge cases, `dune runtest` passes
+## Severity
 
-**Documentation:**
-- **skills/documenting** — docs match code, versions consistent, no stale refs
+| Level | Meaning | Action |
+|-------|---------|--------|
+| **D** | Blocking | REQUEST CHANGES |
+| **C** | Significant | APPROVED with nit |
+| **B** | Minor | APPROVED, note for author |
+| **A** | Polish | APPROVED |
 
 ## Verdicts
 
-| Verdict | Action |
-|---------|--------|
-| **APPROVED** | Reviewer merges |
-| **APPROVED with nit** | Reviewer merges, note suggestions |
-| **REQUEST CHANGES** | Author fixes, re-requests |
-| **NEEDS DISCUSSION** | CLP thread |
+- **APPROVED:** No D-level, C-level noted as nits
+- **REQUEST CHANGES:** Any D-level violation
 
-## Format
+## Output Format
 
 ```markdown
 **Verdict:** APPROVED / REQUEST CHANGES
 
-## Summary
-(one line)
+## Checklist Results
 
-## Issues
-- [ ] Issue (blocking / nit)
+| Check | Status | Severity |
+|-------|--------|----------|
+| No `ref` usage | ✓ | D |
+| Tests exist | ✗ | C |
+
+**Worst violation:** C
+
+## Notes
+(specific feedback)
 ```
-
-## Principles
-
-- Be specific: "Replace `string` with `Reason of string`"
-- Separate blocking from nits
-- Ask, don't assume: "Does this handle X?"
-- Don't let reviews sit
 
 ## After Review
 
