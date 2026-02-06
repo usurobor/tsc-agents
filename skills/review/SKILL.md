@@ -13,6 +13,14 @@ Stop at first P0 or P1 failure → request fix. Don't continue reviewing.
 - **Ask, don't assume.** "Does this handle X?" not "This doesn't handle X"
 - **Don't let reviews sit.** Review promptly or hand off.
 
+## Mindset Compliance
+
+Before approving, verify no violations of:
+
+- **FUNCTIONAL.md** — no `ref`, no `with _ ->`, no `List.hd`, pattern match on bool
+- **ENGINEERING.md** — KISS, YAGNI, done > perfect
+- **skills/ocaml** — pure in `_lib.ml`, FFI in main, specific exceptions
+
 ## Verdicts
 
 | Verdict | When |
