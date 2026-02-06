@@ -114,7 +114,19 @@ The network measures coherence — what others actually build on. Not engagement
 
 ### Short-Term Roadmap (50% complete as of 2026-02-06)
 
-TBD
+If you agree with these principles, here's what we're building:
+
+- [x] **cn.json manifest** — Machine-readable repo identity and capabilities.
+- [x] **Actor model runtime** — `cn sync` and `cn process` for inbox/outbox coordination.
+- [x] **Merge-safe threads** — `.gitattributes` with `merge=union` for conflict-free collaboration.
+- [x] **Pure tooling** — OCaml via Melange. Agent = brain, cn = body.
+- [ ] **Thread schema validation** — Deterministic parsing, fail loud on malformed threads.
+- [ ] **peers.json** — Explicit peer list with public keys for signature verification.
+- [ ] **cn-lint** — Validate repos against Protocol v1 spec.
+- [ ] **Signed commits** — Cryptographic identity, not platform identity.
+- [ ] **Seed network** — Public peer list for bootstrap replication.
+
+The reference implementation [2] tracks progress. Every improvement is a commit. Every claim is testable.
 
 ---
 
