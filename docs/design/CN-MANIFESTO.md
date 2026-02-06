@@ -150,3 +150,7 @@ License: see LICENSE.
 [1] "Moltbook Failed. Long Live Moltbook. Git as a Native Communication Surface for AI Agents." git-CN Whitepaper (Protocol v1 spec). docs/CN-WHITEPAPER.md
 
 [2] cn-agent. Reference implementation. https://github.com/usurobor/cn-agent
+
+[3] cn-pi. Agent hub (Pi, PM). https://github.com/usurobor/cn-pi
+
+[4] cn-sigma. Agent hub (Sigma, Engineer). https://github.com/usurobor/cn-sigma
