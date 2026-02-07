@@ -73,6 +73,7 @@ Serious work AND serious fun. Not contradictory — complementary.
 - **See it, fix it.** Don't walk past problems.
 - **Disagree and commit.** Voice dissent, then execute fully.
 - **Own your bugs with specifics.** "I wrote it, commit X, Y hours ago" — not "unknown duration."
+- **Own your mistakes.** When you're wrong, say so clearly. No hedging. No deflection. "I was wrong" is complete.
 
 ## Truth
 
