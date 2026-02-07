@@ -759,37 +759,6 @@ let wake_agent () =
   | Some _ -> print_endline (ok "Wake triggered")
   | None -> print_endline (warn "Wake trigger failed - is OpenClaw running?")
 
-(* === Process (Actor Loop) === *)
-
-let run_process hub_path =
-  print_endline (info "cn process: actor loop...");
-  
-  (* Step 1: Queue any new inbox items *)
-  let queued = queue_inbox_items hub_path in
-  if queued > 0 then
-    print_endline (info (Printf.sprintf "Added %d item(s) to queue" queued));
-  
-  (* Step 2: Check if completed IO pair exists, archive if so *)
-  let inp = input_path hub_path in
-  let outp = output_path hub_path in
-  
-  if Fs.exists inp && Fs.exists outp then begin
-    (* Agent completed work - archive and continue *)
-    if archive_io_pair hub_path then begin
-      (* Feed next input *)
-      if feed_next_input hub_path then wake_agent ()
-    end
-  end
-  else if Fs.exists inp then begin
-    (* Input exists but no output - agent still working *)
-    print_endline (info "Agent working (input.md exists, awaiting output.md)");
-    print_endline (info (Printf.sprintf "Queue depth: %d" (queue_count hub_path)))
-  end
-  else begin
-    (* No input - feed next *)
-    if feed_next_input hub_path then wake_agent ()
-  end
-
 (* === Sync === *)
 
 let run_sync hub_path name =
@@ -893,6 +862,107 @@ let run_mca_list hub_path =
             let t = String.trim l in t <> "" && not (starts_with ~prefix:"#" t))
             |> Option.value ~default:"(no description)" in
           print_endline (Printf.sprintf "  [%s] %s (by %s)" id (String.trim desc) by))
+
+(* === MCA Review Injection === *)
+
+let mca_cycle_path hub_path = Path.join hub_path "state/.mca-cycle"
+let mca_review_interval = 5
+
+let get_mca_cycle hub_path =
+  let path = mca_cycle_path hub_path in
+  if Fs.exists path then
+    int_of_string_opt (String.trim (Fs.read path)) |> Option.value ~default:0
+  else 0
+
+let increment_mca_cycle hub_path =
+  let current = get_mca_cycle hub_path in
+  let next = current + 1 in
+  Fs.write (mca_cycle_path hub_path) (string_of_int next);
+  next
+
+let mca_count hub_path =
+  let dir = mca_dir hub_path in
+  if not (Fs.exists dir) then 0
+  else Fs.readdir dir |> List.filter is_md_file |> List.length
+
+let queue_mca_review hub_path =
+  let dir = mca_dir hub_path in
+  let mcas = Fs.readdir dir |> List.filter is_md_file |> List.sort String.compare in
+  let mca_list = mcas |> List.map (fun file ->
+    let content = Fs.read (Path.join dir file) in
+    let meta = parse_frontmatter content in
+    let id = meta |> List.find_map (fun (k, v) -> if k = "id" then Some v else None)
+      |> Option.value ~default:"?" in
+    let by = meta |> List.find_map (fun (k, v) -> if k = "surfaced-by" then Some v else None)
+      |> Option.value ~default:"?" in
+    let lines = String.split_on_char '\n' content in
+    let rec skip_fm in_fm = function
+      | [] -> []
+      | "---" :: rest when not in_fm -> skip_fm true rest
+      | "---" :: rest when in_fm -> rest
+      | _ :: rest when in_fm -> skip_fm in_fm rest
+      | rest -> rest
+    in
+    let body_lines = skip_fm false lines in
+    let desc = body_lines |> List.find_opt (fun l -> 
+      let t = String.trim l in t <> "" && not (starts_with ~prefix:"#" t))
+      |> Option.value ~default:"(no description)" in
+    Printf.sprintf "- [%s] %s (by %s)" id (String.trim desc) by
+  ) |> String.concat "\n" in
+  
+  let review_id = Printf.sprintf "mca-review-%s" (now_iso () |> Js.String.slice ~start:0 ~end_:10) in
+  let body = Printf.sprintf {|# MCA Review
+
+Review the MCA queue below. Identify the highest priority MCA with:
+- Lowest cost to complete
+- Highest probability of success
+
+If you can do it now, do it. Otherwise, explain why not.
+
+## Open MCAs
+
+%s
+|} mca_list in
+  
+  let _ = queue_add hub_path review_id "system" body in
+  log_action hub_path "mca.review-queued" (Printf.sprintf "count:%d" (List.length mcas));
+  print_endline (ok (Printf.sprintf "Queued MCA review (%d MCAs)" (List.length mcas)))
+
+(* === Process (Actor Loop) === *)
+
+let run_process hub_path =
+  print_endline (info "cn process: actor loop...");
+  
+  (* Step 1: Queue any new inbox items *)
+  let queued = queue_inbox_items hub_path in
+  if queued > 0 then
+    print_endline (info (Printf.sprintf "Added %d item(s) to queue" queued));
+  
+  (* Step 2: Check MCA review cycle *)
+  let cycle = increment_mca_cycle hub_path in
+  if cycle mod mca_review_interval = 0 && mca_count hub_path > 0 then
+    queue_mca_review hub_path;
+  
+  (* Step 3: Check if completed IO pair exists, archive if so *)
+  let inp = input_path hub_path in
+  let outp = output_path hub_path in
+  
+  if Fs.exists inp && Fs.exists outp then begin
+    (* Agent completed work - archive and continue *)
+    if archive_io_pair hub_path then begin
+      (* Feed next input *)
+      if feed_next_input hub_path then wake_agent ()
+    end
+  end
+  else if Fs.exists inp then begin
+    (* Input exists but no output - agent still working *)
+    print_endline (info "Agent working (input.md exists, awaiting output.md)");
+    print_endline (info (Printf.sprintf "Queue depth: %d" (queue_count hub_path)))
+  end
+  else begin
+    (* No input - feed next *)
+    if feed_next_input hub_path then wake_agent ()
+  end
 
 (* === Runtime === *)
 
