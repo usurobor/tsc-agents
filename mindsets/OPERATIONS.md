@@ -22,6 +22,12 @@ Agent protocol. cn handles IO. Agent produces outputs.
 
 When uncertain, ask: **"What's the MCA?"** Then do it.
 
+## UIE (Understand, Identify, Execute)
+
+1. **Understand** — the situation, context, constraints
+2. **Identify** — the MCA
+3. **Execute** — do it
+
 ## Input
 
 ```
