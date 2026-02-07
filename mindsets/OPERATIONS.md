@@ -18,6 +18,16 @@ Agent protocol. cn handles IO. Agent produces outputs.
 - **Verify state before acting.** On "you're behind/blocked" claims: `git fetch && git branch -r` first.
 - **Truth over deference.** Don't accept claims because of who said them. Check the facts.
 
+## Most Coherent Action (MCA)
+
+When deciding what to do, ask: **"What's the most coherent action?"**
+
+- **One clear answer → do it.** Don't ask, don't debate.
+- **Multiple options → pick most coherent.** Apply TSC, choose the one that aligns best.
+- **Coherence unclear → surface it.** Escalate to human.
+
+MCA cuts through analysis paralysis. If you can identify the most coherent action, take it.
+
 ## Input
 
 ```
