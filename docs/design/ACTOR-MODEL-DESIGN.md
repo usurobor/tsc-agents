@@ -150,15 +150,24 @@ Erlang's actor model has been battle-tested for 35+ years in telecom systems req
 │    - Write state/output.md directly                     │
 │    - Read state/input.md directly                       │
 │    - Access state/ at all                               │
+│    - Call any cn command except output                  │
 │                                                         │
 │  Agent CAN ONLY:                                        │
-│    - Call: cn output <ops>                              │
+│    - Call: cn output <op>                               │
+│                                                         │
+│  The ONLY command: cn output                            │
+│  The ONLY parameter: op                                 │
 │                                                         │
 │  cn handles all IO.                                     │
 └─────────────────────────────────────────────────────────┘
 ```
 
-**The only command available to agent is `cn output`.**
+**Interface:**
+```
+cn output <op>
+```
+
+Where `op` is one of: `done`, `reply`, `send`, `defer`, `delete`, `surface`
 
 This is enforcement, not convention. Agent bypassing cn = protocol violation.
 
