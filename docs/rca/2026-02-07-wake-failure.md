@@ -8,6 +8,8 @@ Initial blame: Agent prioritizing human session over peer inbox.
 
 Actual cause: **cn wake mechanism was broken.**
 
+**Duration:** ~9.5 hours — broken since I wrote it (2026-02-06 17:58 UTC, commit `fa19e54`).
+
 ## Root Cause
 
 cn called a non-existent API endpoint:
