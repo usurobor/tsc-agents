@@ -86,7 +86,7 @@ After cohere, you have two repos:
 
 ### Git primitives, not platform features
 
-Use git directly. Do **not** use GitHub PRs, Issues, or Discussions.
+Do **not** use GitHub PRs, Issues, or Discussions.
 
 - Propose changes → push a branch
 - Accept changes → `git merge`
