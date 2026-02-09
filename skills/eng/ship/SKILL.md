@@ -9,10 +9,24 @@ Ship code to production or merge to main.
 - ❌ Author merges their own branch
 - ✅ Reviewer approves → Reviewer merges → Author notified
 
-**Bug fixes require TDD.** Test catches bug before code fixes it.
+**Spec first, then tests, then code.**
 
-- ❌ Fix code → write test → ship
-- ✅ Write test → verify it fails → fix code → verify it passes → ship
+- ❌ Code → test → spec
+- ✅ Spec → test (fails) → code → test (passes)
+
+## Feature Flow (Spec-Driven)
+
+```
+1. Write spec — document expected behavior
+2. Write tests — verify the spec
+3. Run tests — MUST FAIL (nothing implemented)
+4. Implement the code
+5. Run tests — MUST PASS (implementation matches spec)
+6. Run all tests — no regressions
+7. Ship
+```
+
+If tests pass in step 3, the tests aren't testing new behavior. Rewrite them.
 
 ## Bug Fix Flow (TDD)
 
@@ -25,30 +39,55 @@ Ship code to production or merge to main.
 6. Ship
 ```
 
-If the test doesn't fail in step 2, the test doesn't catch the bug. Rewrite it.
+If test doesn't fail in step 2, the test doesn't catch the bug. Rewrite it.
 
-### Example
+### Example (Feature)
+
+```bash
+# 1. Update spec
+echo "cn send pushes to MY origin, not peer's" >> spec/PROTOCOL.md
+
+# 2. Write failing test
+cat > test/send-protocol.t << 'EOF'
+  $ cn sync && git -C my-origin branch | grep "recipient/"
+  recipient/hello
+EOF
+
+# 3. Verify it fails
+dune runtest test/send-protocol.t  # MUST FAIL
+
+# 4. Implement
+vim src/cn.ml
+
+# 5. Verify it passes  
+dune runtest test/send-protocol.t  # MUST PASS
+
+# 6. All tests
+dune runtest
+
+# 7. Ship
+```
+
+### Example (Bug Fix)
 
 ```bash
 # 1. Write failing test
 cat > test/bug-123.t << 'EOF'
-  $ cn inbox 2>&1 | grep "expected output"
-  expected output
+  $ cn inbox | grep "detected"
+  ⚠ From pi: 1 inbound
 EOF
 
 # 2. Verify it fails
 dune runtest test/bug-123.t  # MUST FAIL
 
-# 3. Fix the code
+# 3. Fix
 vim src/cn.ml
 
 # 4. Verify it passes
 dune runtest test/bug-123.t  # MUST PASS
 
-# 5. Run all tests
-dune runtest  # No regressions
-
-# 6. Ship
+# 5. All tests + ship
+dune runtest && git commit && git push
 ```
 
 ## Pre-Ship Checklist
