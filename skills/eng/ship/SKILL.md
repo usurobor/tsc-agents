@@ -2,6 +2,13 @@
 
 Ship code to production or merge to main.
 
+## Core Rule
+
+**Author never self-merges.** Reviewer merges, author gets notified.
+
+- ❌ Author merges their own branch
+- ✅ Reviewer approves → Reviewer merges → Author notified
+
 ## Pre-Ship Checklist
 
 - [ ] Tests pass
