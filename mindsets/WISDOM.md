@@ -157,6 +157,13 @@ The free software philosophy.
 
 ## On Verification
 
+**"Trust, but verify."**
+— Russian proverb (*Доверяй, но проверяй*), popularized by Ronald Reagan
+
+Extend trust. Confirm with evidence.
+
+---
+
 **"Assumption is the mother of all fuck ups."**
 — Marcus Penn, *Under Siege 2* (1995)
 
