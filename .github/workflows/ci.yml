@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  # OCaml tests and Melange build
-  ocaml:
+  # OCaml native build and tests
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,38 +20,20 @@ jobs:
       
       - name: Install dependencies
         run: |
-          opam install dune melange ppx_expect ppxlib mdx --yes
+          opam install dune mdx --yes
       
-      - name: Build CLI
+      - name: Build native binary
         run: |
           eval $(opam env)
-          cd tools && npm ci && npm run build
+          dune build tools/src/cn/cn.exe
       
-      - name: Run tests (cram + unit)
+      - name: Smoke test binary
+        run: |
+          eval $(opam env)
+          ./_build/default/tools/src/cn/cn.exe --version
+          ./_build/default/tools/src/cn/cn.exe --help
+      
+      - name: Run tests
         run: |
           eval $(opam env)
           dune runtest
-      
-      - name: Build Melange output
-        run: |
-          eval $(opam env)
-          dune build @peer-sync
-
-  # Node.js CLI smoke tests (verify bundled CLI runs on different Node versions)
-  node:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18, 20, 22]
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-      
-      - name: Smoke test bundled CLI
-        run: |
-          node tools/dist/cn.js --version
-          node tools/dist/cn.js --help
