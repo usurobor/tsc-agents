@@ -1945,7 +1945,11 @@ let run_update () =
           let install_dir = "/usr/local/lib/cnos" in
           let pull_cmd = Printf.sprintf "cd %s && git pull --ff-only 2>&1" install_dir in
           match Child_process.exec pull_cmd with
-          | Some _ -> print_endline (ok (Printf.sprintf "Updated to v%s" latest))
+          | Some _ ->
+              (* Also update bin scripts *)
+              let bin_cmd = Printf.sprintf "cp %s/bin/* /usr/local/bin/ 2>/dev/null && chmod +x /usr/local/bin/cn-cron" install_dir in
+              let _ = Child_process.exec bin_cmd in
+              print_endline (ok (Printf.sprintf "Updated to v%s" latest))
           | None -> print_endline (fail "Update failed. Try: cd /usr/local/lib/cnos && git pull")
 
 let run_update_with_cron hub_path =
