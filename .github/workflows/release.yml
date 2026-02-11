@@ -1,14 +1,24 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux-x64
+          - os: macos-latest
+            target: macos-x64
+          - os: macos-14
+            target: macos-arm64
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -18,8 +28,7 @@ jobs:
           ocaml-compiler: 4.14.x
 
       - name: Install dependencies
-        run: |
-          opam install dune ppx_expect ppxlib mdx --yes
+        run: opam install dune ppx_expect ppxlib --yes
 
       - name: Build native binary
         run: |
@@ -31,8 +40,32 @@ jobs:
           eval $(opam env)
           dune runtest
 
-      - name: Upload binary
+      - name: Package binary
+        run: |
+          mkdir -p dist
+          cp _build/default/tools/src/cn/cn.exe dist/cn-${{ matrix.target }}
+          chmod +x dist/cn-${{ matrix.target }}
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cn-linux-amd64
-          path: _build/default/tools/src/cn/cn.exe
+          name: cn-${{ matrix.target }}
+          path: dist/cn-${{ matrix.target }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/*/cn-*
+          generate_release_notes: true
