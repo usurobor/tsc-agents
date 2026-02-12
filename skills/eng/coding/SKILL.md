@@ -1,15 +1,15 @@
 ---
 name: coding
-description: Ship code where unintended behavior is unrepresentable. Use before implementing, during review, or pre-ship. Triggers on coding tasks, "check for bugs", "is this safe to ship".
+description: Ship code where unintended behavior — by machine or maintainer — is unrepresentable. Use before implementing, during review, or pre-ship. Triggers on coding tasks, "check for bugs", "is this safe to ship".
 ---
 
 # Coding
 
 ## Core Principle
 
-**Coherent code: unintended behavior is unrepresentable.**
+**Coherent code: unintended behavior — by machine or maintainer — is unrepresentable.**
 
-If something unintended can happen, it's incoherent. You're done when you can't find a path that isn't intended.
+If the machine can do something unintended, it's incoherent. If a maintainer can misread the intent, it's incoherent. You're done when neither can go wrong.
 
 ## Coherence at Each Level
 
@@ -75,7 +75,7 @@ Constrain what behavior can occur.
 
 ### 3. Modules
 
-Constrain what organization can exist.
+Constrain what a maintainer can misunderstand.
 
 3.1. **Group by domain**
   - ❌ Types at top, functions below
