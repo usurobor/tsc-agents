@@ -91,8 +91,8 @@ let run_commit hub_path name msg =
         | None -> Printf.sprintf "%s: auto-commit %s" name (String.sub (Cn_fmt.now_iso ()) 0 10)
       in
       let _ = Cn_ffi.Child_process.exec_in ~cwd:hub_path "git add -A" in
-      let escaped = String.map (fun c -> if c = '"' then '\'' else c) message in
-      match Cn_ffi.Child_process.exec_in ~cwd:hub_path (Printf.sprintf "git commit -m \"%s\"" escaped) with
+      (* 1.2: Filename.quote for proper shell escaping, not hand-rolled char replacement *)
+      match Cn_ffi.Child_process.exec_in ~cwd:hub_path (Printf.sprintf "git commit -m %s" (Filename.quote message)) with
       | Some _ ->
           Cn_hub.log_action hub_path "commit" message;
           print_endline (Cn_fmt.ok (Printf.sprintf "Committed: %s" message))
